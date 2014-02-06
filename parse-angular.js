@@ -3,19 +3,19 @@ angular.module('parse-angular', [])
 
 
 	// Process only if Parse exist on the global window, do nothing otherwise
-	if ($window.Parse) {
+	if (!angular.isUndefined($window.Parse) && angular.isObject($window.Parse)) {
 
 		// Keep a handy local reference
 		var Parse = $window.Parse;
 
 		//-------------------------------------
-		// Let's patch Parse.Object first
+		// Let's patch prototypes first
 		//-------------------------------------
 
 		var protoMethodsToUpdate ={
-			"Object": ['save', 'fetch', 'destroy']
-		}
-		// var staticMethodsToReplace = ['saveAll', 'destroyAll'];
+			"Object": ['save', 'fetch', 'destroy'],
+			"Collection": ['fetch', 'remove']
+		};
 
 
 		for (var k in protoMethodsToUpdate) {
@@ -23,7 +23,7 @@ angular.module('parse-angular', [])
 			var currentMethods = protoMethodsToUpdate[k];
 			var currentClass = k;
 
-			protoMethodsToUpdate.forEach(function(method){
+			currentMethods.forEach(function(method){
 
 				var origMethod = Parse[currentClass].prototype[method];
 
@@ -32,13 +32,8 @@ angular.module('parse-angular', [])
 
 					var defer = $q.defer();
 
-					origMethod.call(this, arguments)
-					.then(function(data){
-						defer.resolve(data);
-					},
-					function(err){
-						defer.reject(err);
-					})
+					origMethod.apply(this, arguments)
+					.then(defer.resolve, defer.reject);
 
 					return defer.promise;
 
@@ -48,11 +43,6 @@ angular.module('parse-angular', [])
 			});
 
 		}
-
-
-
-
-
 
 	}
 
