@@ -71,7 +71,7 @@ angular.module('parse-angular', [])
 
 					var defer = $q.defer();
 
-					origMethod.apply(this, arguments)
+					origMethod.apply(null, arguments)
 					.then(defer.resolve, defer.reject);
 
 					return defer.promise;
