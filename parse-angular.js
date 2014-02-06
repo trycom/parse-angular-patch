@@ -1,4 +1,6 @@
-angular.module('parse-angular', [])
+var module = angular.module('parse-angular', []);
+
+module
 .factory('PatchParseAngular', function($q, $window){
 
 
@@ -12,7 +14,7 @@ angular.module('parse-angular', [])
 		// Structured object of what we need to update
 		//-------------------------------------
 
-		var methodsToUpdate ={
+		var methodsToUpdate = {
 			"Object": {
 				prototype: ['save', 'fetch', 'destroy'],
 				static: ['saveAll', 'destroyAll']
@@ -82,6 +84,57 @@ angular.module('parse-angular', [])
 
 
 		}
+	}
+
+});
+
+
+
+module
+.factory('EnhanceParse', function($q, $window){
+
+
+	if (!angular.isUndefined($window.Parse) && angular.isObject($window.Parse)) {
+
+		var Parse = $window.Parse;
+
+		/// Enhance Objects
+
+
+
+
+
+
+
+		/// Enhance Collection
+		Parse.Collection.prototype = angular.extend(Parse.Collection.prototype, {
+			// Simple paginator
+			loadMore: function(opts) {
+
+				if (!angular.isUndefined(this.query)) {
+
+					// Default Parse limit is 100
+					var currentLimit = this.query._limit == -1 ? 100 : this.query._limit;
+					var currentSkip = this.query._skip;
+
+					currentSkip += currentLimit;
+
+					this.query.skip(currentSkip);
+
+					var _this = this;
+
+					return this.fetch()
+					.then(function(newModels){
+						if (!opts || opts.add !== false) _this.add(newModels);
+						return newModels;
+					});
+
+				}
+
+			}
+
+		});
+
 	}
 
 });
