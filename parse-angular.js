@@ -1,5 +1,5 @@
 angular.module('parse-angular', [])
-.service('PatchParseAngular', function($q, $window){
+.factory('PatchParseAngular', function($q, $window){
 
 
 	// Process only if Parse exist on the global window, do nothing otherwise
@@ -9,21 +9,40 @@ angular.module('parse-angular', [])
 		var Parse = $window.Parse;
 
 		//-------------------------------------
-		// Let's patch prototypes first
+		// Structured object of what we need to update
 		//-------------------------------------
 
-		var protoMethodsToUpdate ={
-			"Object": ['save', 'fetch', 'destroy'],
-			"Collection": ['fetch', 'remove']
+		var methodsToUpdate ={
+			"Object": {
+				prototype: ['save', 'fetch', 'destroy'],
+				static: ['saveAll', 'destroyAll']
+			},
+			"Collection": {
+				prototype: ['fetch', 'remove'],
+				static: [],
+			},
+			"Query": {
+				prototype: ['find', 'first', 'count'],
+				static: []
+			},
+			"Cloud": {
+				prototype: [],
+				static: ['run']
+			}
 		};
 
+		//// Let's loop over Parse objects
+		for (var k in methodsToUpdate) {
 
-		for (var k in protoMethodsToUpdate) {
+			var currentClass = k;	
+			var currentObject = methodsToUpdate[k];
 
-			var currentMethods = protoMethodsToUpdate[k];
-			var currentClass = k;
+			var currentProtoMethods = currentObject.prototype;
+			var currentStaticMethods = currentObject.static;
 
-			currentMethods.forEach(function(method){
+
+			/// Patching prototypes
+			currentProtoMethods.forEach(function(method){
 
 				var origMethod = Parse[currentClass].prototype[method];
 
@@ -39,11 +58,30 @@ angular.module('parse-angular', [])
 
 				}
 
+			});
+
+
+			///Patching static methods too
+			currentStaticMethods.forEach(function(method){
+
+				var origMethod = Parse[currentClass][method];
+
+				// Overwrite original function by wrapping it with $q
+				Parse[currentClass][method] = function() {
+
+					var defer = $q.defer();
+
+					origMethod.apply(this, arguments)
+					.then(defer.resolve, defer.reject);
+
+					return defer.promise;
+
+				}
 
 			});
 
-		}
 
+		}
 	}
 
 });
