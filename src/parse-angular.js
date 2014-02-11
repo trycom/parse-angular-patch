@@ -1,7 +1,6 @@
 var module = angular.module('parse-angular', []);
 
-module
-.factory('PatchParseAngular', function($q, $window){
+module.run(['$q', '$window', function($q, $window){
 
 
 	// Process only if Parse exist on the global window, do nothing otherwise
@@ -58,7 +57,7 @@ module
 
 					return defer.promise;
 
-				}
+				};
 
 			});
 
@@ -78,7 +77,7 @@ module
 
 					return defer.promise;
 
-				}
+				};
 
 			});
 
@@ -86,23 +85,24 @@ module
 		}
 	}
 
-});
+}]);
 
 
 
-module
-.factory('EnhanceParse', function($q, $window){
+angular.module('parse-angular.enhance', ['parse-angular'])
+.run(['$q', '$window', function($q, $window){
 
 
 	if (!angular.isUndefined($window.Parse) && angular.isObject($window.Parse)) {
 
 		var Parse = $window.Parse;
 
-		/// Enhance Objects
+		/// Create a method to easily access our object
+		/// Because Parse.Object("xxxx") is actually creating an object and we can't access static methods
 
-
-
-
+		Parse.Object.get = function(className) {
+			return Parse.Object._className[className];
+		};
 
 
 
@@ -137,4 +137,4 @@ module
 
 	}
 
-});
+}]);

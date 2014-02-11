@@ -1,0 +1,32 @@
+{
+  "name": "parse-angular-patch",
+  "version": "0.0.1",
+  "description": "Seamless Parse integration with AngularJS",
+  "main": "src/parse-angular.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandid/parse-angular-patch.git"
+  },
+  "keywords": [
+    "parse",
+    "angular",
+    "angularjs",
+    "parsesdk",
+    "collection",
+    "objects"
+  ],
+  "author": "Nicolas Kermarc <nick@getbrandid.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandid/parse-angular-patch/issues"
+  },
+  "homepage": "https://github.com/brandid/parse-angular-patch",
+  "devDependencies": {
+    "gulp": "~3.5.2",
+    "gulp-uglify": "~0.2.1",
+    "gulp-jshint": "~1.4.0"
+  }
+}
