@@ -100,7 +100,7 @@ angular.module('parse-angular.enhance', ['parse-angular'])
 		/// Create a method to easily access our object
 		/// Because Parse.Object("xxxx") is actually creating an object and we can't access static methods
 
-		Parse.Object.get = function(className) {
+		Parse.Object.getClass = function(className) {
 			return Parse.Object._className[className];
 		};
 
