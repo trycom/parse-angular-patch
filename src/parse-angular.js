@@ -23,7 +23,7 @@ module.run(['$q', '$window', function($q, $window){
 				static: [],
 			},
 			"Query": {
-				prototype: ['find', 'first', 'count'],
+				prototype: ['find', 'first', 'count', 'get'],
 				static: []
 			},
 			"Cloud": {
@@ -50,12 +50,17 @@ module.run(['$q', '$window', function($q, $window){
 				// Overwrite original function by wrapping it with $q
 				Parse[currentClass].prototype[method] = function() {
 
-					var defer = $q.defer();
+					return origMethod.apply(this, arguments)
+					.then(function(data){
+						var defer = $q.defer();
+						defer.resolve(data);
+						return defer.promise;	
+					}, function(err){
+						var defer = $q.defer();
+						defer.reject(err);
+						return defer.promise;	
+					});
 
-					origMethod.apply(this, arguments)
-					.then(defer.resolve, defer.reject);
-
-					return defer.promise;
 
 				};
 
@@ -70,12 +75,16 @@ module.run(['$q', '$window', function($q, $window){
 				// Overwrite original function by wrapping it with $q
 				Parse[currentClass][method] = function() {
 
-					var defer = $q.defer();
-
-					origMethod.apply(null, arguments)
-					.then(defer.resolve, defer.reject);
-
-					return defer.promise;
+					return origMethod.apply(null, arguments)
+					.then(function(data){
+						var defer = $q.defer();
+						defer.resolve(data);
+						return defer.promise;	
+					}, function(err){
+						var defer = $q.defer();
+						defer.reject(err);
+						return defer.promise;	
+					});
 
 				};
 
