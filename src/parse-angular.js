@@ -29,6 +29,14 @@ module.run(['$q', '$window', function($q, $window){
 			"Cloud": {
 				prototype: [],
 				static: ['run']
+			},
+			"User": {
+				prototype: ['signUp'],
+				static: ['requestPasswordReset', 'logIn', 'logOut']
+			},
+			"FacebookUtils": {
+				prototype: [],
+				static: ['logIn', 'link', 'unlink']
 			}
 		};
 
@@ -110,12 +118,41 @@ angular.module('parse-angular.enhance', ['parse-angular'])
 		/// Because Parse.Object("xxxx") is actually creating an object and we can't access static methods
 
 		Parse.Object.getClass = function(className) {
-			return Parse.Object._className[className];
+			return Parse.Object._classMap[className];
 		};
 
 
+		///// 
 
-		/// Enhance Collection
+
+
+
+
+		/// Keep references & init collection class map
+		Parse.Collection._classMap = {};
+		
+		var origExtend = Parse.Collection.extend;
+
+		/// Enhance Collection 'extend' to store their subclass in a map
+		Parse.Collection.extend = function(opts) {
+
+			var extended = origExtend.apply(this, arguments);
+
+			if (opts && opts.className) {
+				Parse.Collection._classMap[opts.className] = extended;
+			}
+
+			return extended;
+
+		};
+
+
+		Parse.Collection.getClass = function(className) {
+			return Parse.Collection._classMap[className];
+		}
+
+
+		/// Enhance Collection prototype
 		Parse.Collection.prototype = angular.extend(Parse.Collection.prototype, {
 			// Simple paginator
 			loadMore: function(opts) {
@@ -132,9 +169,10 @@ angular.module('parse-angular.enhance', ['parse-angular'])
 
 					var _this = this;
 
-					return this.fetch()
+					return this.query.find()
 					.then(function(newModels){
-						if (!opts || opts.add !== false) _this.add(newModels);
+						if (!opts || opts.add !== false) _this.add(newModels)
+						if (newModels.length < currentLimit) _this.hasMoreToLoad = false;
 						return newModels;
 					});
 
