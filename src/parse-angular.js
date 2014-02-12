@@ -19,7 +19,7 @@ module.run(['$q', '$window', function($q, $window){
 				static: ['saveAll', 'destroyAll']
 			},
 			"Collection": {
-				prototype: ['fetch', 'remove'],
+				prototype: ['fetch'],
 				static: [],
 			},
 			"Query": {
@@ -32,7 +32,7 @@ module.run(['$q', '$window', function($q, $window){
 			},
 			"User": {
 				prototype: ['signUp'],
-				static: ['requestPasswordReset', 'logIn', 'logOut']
+				static: ['requestPasswordReset', 'logIn']
 			},
 			"FacebookUtils": {
 				prototype: [],
@@ -83,7 +83,7 @@ module.run(['$q', '$window', function($q, $window){
 				// Overwrite original function by wrapping it with $q
 				Parse[currentClass][method] = function() {
 
-					return origMethod.apply(null, arguments)
+					return origMethod.apply(this, arguments)
 					.then(function(data){
 						var defer = $q.defer();
 						defer.resolve(data);
