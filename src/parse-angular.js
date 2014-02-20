@@ -38,7 +38,7 @@
 					},
 					"User": {
 						prototype: ['signUp'],
-						static: ['requestPasswordReset', 'logIn']
+						static: ['requestPasswordReset', 'logIn', 'become', 'signUp']
 					},
 					"FacebookUtils": {
 						prototype: [],
