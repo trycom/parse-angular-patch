@@ -5,6 +5,7 @@
   "authors": [
     "@spacenick @arush"
   ],
+  "main": "dist/parse-angular.js",
   "description": "A patch for the Parse SDK to make it work natively and seamlessly with AngularJS",
   "keywords": [
     "parse",
