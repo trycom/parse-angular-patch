@@ -1,0 +1,25 @@
+{
+  "name": "parse-angular-patch",
+  "version": "0.1.0",
+  "homepage": "https://github.com/brandid/parse-angular-patch",
+  "authors": [
+    "@spacenick @arush"
+  ],
+  "description": "A patch for the Parse SDK to make it work natively and seamlessly with AngularJS",
+  "keywords": [
+    "parse",
+    "angular",
+    "angularjs",
+    "promises",
+    "promise",
+    "defer"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
