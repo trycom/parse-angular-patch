@@ -12,7 +12,11 @@ Brought to you by the [BRANDiD](https://www.getbrandid.com) team
 How to use
 ----
 
-1. [Grab the latest version of the patch here](https://raw2.github.com/brandid/parse-angular-patch/master/dist/parse-angular.js)
+1. [Grab the latest version of the patch here](https://raw2.github.com/brandid/parse-angular-patch/master/dist/parse-angular.js) or install it using [Bower](http://bower.io/)
+
+```
+bower install parse-angular-patch
+```
 2. Include the module in your project
 ```javascript
 angular.module('myApp', ['ngAnimate', 'parse-angular'])
