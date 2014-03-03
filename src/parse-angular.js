@@ -147,15 +147,15 @@
 
 							var field = capitaliseFirstLetter(currentAttr);
 
-		        	// Don't override if we set a custom setters or getters
-		        	if(!newClass.prototype['get' + field]) {
+							// Don't override if we set a custom setters or getters
+							if(!newClass.prototype['get' + field]) {
 								newClass.prototype['get' + field] = function() {
-									return this.get(field);
+									return this.get(currentAttr);
 								};
 							}
 							if(!newClass.prototype['set' + field]) {
 								newClass.prototype['set' + field] = function(data) {
-									this.set(field, data);
+									this.set(currentAttr, data);
 									return this;
 								}
 							}
@@ -226,6 +226,7 @@
 			}
 
 		}]);
+
 
 
 	}

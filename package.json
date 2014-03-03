@@ -1,6 +1,6 @@
 {
   "name": "parse-angular-patch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Seamless Parse integration with AngularJS",
   "main": "src/parse-angular.js",
   "scripts": {
