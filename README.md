@@ -47,6 +47,7 @@ Extra Features
 ----
 
 This patch also extends the Parse SDK to add the following features :
+* Automatic getters & setters generation from a simple attrs array
 * loadMore() method on Collections for an easy pagination
 * Adds a static getClass() method on Objects and Collections to fetch them easily anywhere in your apps
 
@@ -57,6 +58,27 @@ Simply add the 'parse-angular.enhance' module after the 'parse-angular' one in y
 ```javascript
 angular.module('myApp', ['ngAnimate', 'parse-angular', 'parse-angular.enhance'])
 ```
+
+### Auto generate getters & setters
+
+Nothing simpler, just attach an array of attributes to your Object definition, and the enhancer will generate according getters/setters. Please note that the first letter of your attribute will be transformed to uppercase.
+
+```javascript
+Parse.Object.extend({
+  className: "Monster",
+  attrs: ['kind', 'name', 'place_of_birth']
+});
+
+
+var myMonster = new Parse.Object("Monster");
+// You can do :
+myMonster.getKind();
+myMonster.getName();
+myMonster.setPlace_of_birth('London');
+```
+
+Please note that if you already set a getter or setter on the Object, it won't be overrided. It is just a double-check protection, otherwise just don't add the attribute to your attrs array.
+
 
 ### collection.loadMore
 

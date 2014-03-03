@@ -2,7 +2,7 @@
 
 	var angular = window.angular;
 
-	if (typeof angular !== "undefined") {
+	if (angular !== undef) {
 
 		var module = angular.module('parse-angular', []);
 
@@ -38,7 +38,7 @@
 					},
 					"User": {
 						prototype: ['signUp'],
-						static: ['requestPasswordReset', 'logIn', 'become', 'signUp']
+						static: ['requestPasswordReset', 'logIn']
 					},
 					"FacebookUtils": {
 						prototype: [],
@@ -49,7 +49,7 @@
 				//// Let's loop over Parse objects
 				for (var k in methodsToUpdate) {
 
-					var currentClass = k;	
+					var currentClass = k;
 					var currentObject = methodsToUpdate[k];
 
 					var currentProtoMethods = currentObject.prototype;
@@ -68,11 +68,11 @@
 							.then(function(data){
 								var defer = $q.defer();
 								defer.resolve(data);
-								return defer.promise;	
+								return defer.promise;
 							}, function(err){
 								var defer = $q.defer();
 								defer.reject(err);
-								return defer.promise;	
+								return defer.promise;
 							});
 
 
@@ -93,11 +93,11 @@
 							.then(function(data){
 								var defer = $q.defer();
 								defer.resolve(data);
-								return defer.promise;	
+								return defer.promise;
 							}, function(err){
 								var defer = $q.defer();
 								defer.reject(err);
-								return defer.promise;	
+								return defer.promise;
 							});
 
 						};
@@ -127,16 +127,51 @@
 					return Parse.Object._classMap[className];
 				};
 
+				///// CamelCaseIsh Helper
+				function capitaliseFirstLetter(string) {
+		        return string.charAt(0).toUpperCase() + string.slice(1);
+		    }
 
-				///// 
+
+				///// Override orig extend
+				var origObjectExtend = Parse.Object.extend;
+
+				Parse.Object.extend = function(protoProps) {
+
+					var newClass = origObjectExtend.apply(this, arguments);
+
+					if (Parse._.isObject(protoProps) && Parse._.isArray(protoProps.attrs)) {
+						var attrs = protoProps.attrs;
+						/// Generate setters & getters
+						Parse._.each(attrs, function(currentAttr){
+
+							var field = capitaliseFirstLetter(currentAttr);
+
+		        	// Don't override if we set a custom setters or getters
+		        	if(!newClass.prototype['get' + field]) {
+								newClass.prototype['get' + field] = function() {
+									return this.get(field);
+								};
+							}
+							if(!newClass.prototype['set' + field]) {
+								newClass.prototype['set' + field] = function(data) {
+									this.set(field, data);
+									return this;
+								}
+							}
+
+						});
+					}
 
 
+					return newClass;
+				}
 
 
 
 				/// Keep references & init collection class map
 				Parse.Collection._classMap = {};
-				
+
 				var origExtend = Parse.Collection.extend;
 
 				/// Enhance Collection 'extend' to store their subclass in a map
@@ -191,6 +226,7 @@
 			}
 
 		}]);
+
 
 	}
 
