@@ -26,7 +26,7 @@
 					},
 					"Collection": {
 						prototype: ['fetch'],
-						static: [],
+						static: []
 					},
 					"Query": {
 						prototype: ['find', 'first', 'count', 'get'],
