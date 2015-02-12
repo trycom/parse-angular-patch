@@ -43,6 +43,10 @@
 					"FacebookUtils": {
 						prototype: [],
 						static: ['logIn', 'link', 'unlink']
+					},
+					"Config": {
+						prototype: [],
+						static: ['get']
 					}
 				};
 
