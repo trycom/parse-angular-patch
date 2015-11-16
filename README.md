@@ -3,7 +3,7 @@
 Parse Angular Patch
 =========
 
-Brought to you by the [BRANDiD](https://www.getbrandid.com) team
+Brought to you by [Try.com](https://www.try.com)
 
   - Seamless Parse integration with AngularJS, using promises ($q)
   - Never worry about $scope digests again
@@ -203,14 +203,6 @@ Wanna build a large Parse+Angular app?
 ----
 
 Wait no more and check our [parse-angular-demo](https://github.com/brandid/parse-angular-demo) project
-
-
-BRANDiD <3 Developers
-----
-You'd rather be coding than shopping? We get the feeling. Let our team hook you up with the easiest online shopping experience for men.
-
-[Let's do that](https://www.getbrandid.com)
-
 
 
 License
