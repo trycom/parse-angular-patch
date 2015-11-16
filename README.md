@@ -1,3 +1,5 @@
+**Since we moved to React, this library is no longer maintained.**
+
 Parse Angular Patch
 =========
 
