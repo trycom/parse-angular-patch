@@ -14,7 +14,7 @@ Brought to you by [Try.com](https://www.try.com)
 How to use
 ----
 
-I. [Grab the latest version of the patch here](https://raw2.github.com/brandid/parse-angular-patch/master/dist/parse-angular.js) or install it using [Bower](http://bower.io/)
+I. [Grab the latest version of the patch here](https://raw.githubusercontent.com/brandid/parse-angular-patch/master/dist/parse-angular.js) or install it using [Bower](http://bower.io/)
 
 ```
 bower install parse-angular-patch
