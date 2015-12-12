@@ -51,65 +51,31 @@
 				};
 
 				//// Let's loop over Parse objects
-				for (var k in methodsToUpdate) {
-
-					var currentClass = k;
-					var currentObject = methodsToUpdate[k];
-
-					var currentProtoMethods = currentObject.prototype;
-					var currentStaticMethods = currentObject.static;
-
-
-					/// Patching prototypes
-					currentProtoMethods.forEach(function(method){
-
-						var origMethod = Parse[currentClass].prototype[method];
-
-						// Overwrite original function by wrapping it with $q
-						Parse[currentClass].prototype[method] = function() {
-
-							return origMethod.apply(this, arguments)
-							.then(function(data){
-								var defer = $q.defer();
-								defer.resolve(data);
-								return defer.promise;
-							}, function(err){
-								var defer = $q.defer();
-								defer.reject(err);
-								return defer.promise;
-							});
-
-
-						};
-
-					});
-
-
-					///Patching static methods too
-					currentStaticMethods.forEach(function(method){
-
-						var origMethod = Parse[currentClass][method];
-
-						// Overwrite original function by wrapping it with $q
-						Parse[currentClass][method] = function() {
-
-							return origMethod.apply(this, arguments)
-							.then(function(data){
-								var defer = $q.defer();
-								defer.resolve(data);
-								return defer.promise;
-							}, function(err){
-								var defer = $q.defer();
-								defer.reject(err);
-								return defer.promise;
-							});
-
-						};
-
-					});
-
-
+				for (var currentClass in methodsToUpdate) {
+					var currentObject = methodsToUpdate[currentClass];
+          
+          promisfyQ(Parse[currentClass].prototype, currentObject.prototype);
+          promisfyQ(Parse[currentClass], currentObject.static);
 				}
+        
+        function promisfyQ(object, methods) { 
+      
+					methods.forEach(function(method){
+
+						var origMethod = object[method];
+
+						// Overwrite original function by wrapping it with $q
+						object[method] = function() {
+              var defer = $q.defer();
+              
+              origMethod.apply(this, arguments)
+              .then(defer.resolve, defer.reject);
+              
+              return defer.promise;
+						};
+
+					});          
+        }
 			}
 
 		}]);
