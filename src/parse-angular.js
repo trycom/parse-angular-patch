@@ -52,33 +52,39 @@
 
 				//// Let's loop over Parse objects
 				for (var currentClass in methodsToUpdate) {
-					var currentObject = methodsToUpdate[currentClass];
-          
-          promisfyQ(Parse[currentClass].prototype, currentObject.prototype);
-          promisfyQ(Parse[currentClass], currentObject.static);
+					var prototypes = methodsToUpdate[currentClass].prototype,
+						statics = methodsToUpdate[currentClass].static,
+						current = Parse[currentClass];
+						
+					if ( !angular.isUndefined(current) ) {
+						if ( !angular.isUndefined(current.prototype) ) {
+							promisfyQ(current.prototype, prototypes);
+						}
+						promisfyQ(current, statics);
+					}
 				}
         
-        function promisfyQ(object, methods) { 
-      
-					methods.forEach(function(method){
-
-						var origMethod = object[method];
-
-						// Overwrite original function by wrapping it with $q
-						object[method] = function() {
-              var defer = $q.defer();
-              
-              origMethod.apply(this, arguments)
-              .then(defer.resolve, defer.reject);
-              
-              return defer.promise;
-						};
-
-					});          
-        }
 			}
 
+			function promisfyQ(object, methods) { 
+			
+				methods.forEach(function(method){
+					var origMethod = object[method];
+			
+					// Overwrite original function by wrapping it with $q
+					object[method] = function() {
+						var defer = $q.defer();
+						
+						origMethod.apply(this, arguments)
+						.then(defer.resolve, defer.reject);
+						
+						return defer.promise;
+					};
+				});          
+			}
+      
 		}]);
+    
 
 
 
@@ -96,12 +102,6 @@
 				Parse.Object.getClass = function(className) {
 					return Parse.Object._classMap[className];
 				};
-
-				///// CamelCaseIsh Helper
-				function capitaliseFirstLetter(string) {
-		        return string.charAt(0).toUpperCase() + string.slice(1);
-		    }
-
 
 				///// Override orig extend
 				var origObjectExtend = Parse.Object.extend;
@@ -127,15 +127,14 @@
 								newClass.prototype['set' + field] = function(data) {
 									this.set(currentAttr, data);
 									return this;
-								}
+								};
 							}
 
 						});
 					}
 
-
 					return newClass;
-				}
+				};
 
 
 
@@ -160,7 +159,7 @@
 
 				Parse.Collection.getClass = function(className) {
 					return Parse.Collection._classMap[className];
-				}
+				};
 
 
 				/// Enhance Collection prototype
@@ -182,7 +181,7 @@
 
 							return this.query.find()
 							.then(function(newModels){
-								if (!opts || opts.add !== false) _this.add(newModels)
+								if (!opts || opts.add !== false) _this.add(newModels);
 								if (newModels.length < currentLimit) _this.hasMoreToLoad = false;
 								return newModels;
 							});
@@ -193,6 +192,11 @@
 
 				});
 
+			}
+      
+			///// CamelCaseIsh Helper
+			function capitaliseFirstLetter(string) {
+				return string.charAt(0).toUpperCase() + string.slice(1);
 			}
 
 		}]);
